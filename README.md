@@ -367,7 +367,18 @@ curl "http://localhost:5001/reps/W000817"
 
 ### AI Chatbot (Rep Card)
 
-When a user clicks a representative dot on the map, a rep card appears below with an AI chatbot. The chatbot uses Google Gemini API with the representative's data as context.
+The chatbot has two phases:
+
+| Phase | Semester | Technology | Description |
+|-------|----------|------------|-------------|
+| **Prototype** | Semester 1 | Google Gemini API | Basic AI chat using rep's bio, party, and state as context |
+| **GraphRAG** | Semester 2 | Neo4j + LLM | Chatbot grounded in Senate co-sponsorship graph — answers questions like *"Which senators support AI research for NY?"* |
+
+**Current implementation (Semester 1 — Gemini prototype):**
+When a user clicks a representative dot on the map, a rep card appears below with an AI chatbot. The chatbot uses Google Gemini API with the representative's biographical data as context.
+
+**Planned implementation (Semester 2 — GraphRAG):**
+The chatbot will query Sai Kiran's Neo4j co-sponsorship graph to retrieve relevant graph context before generating a response. This grounds the answers in real co-sponsorship data and reduces hallucinations compared to the baseline Gemini chatbot.
 
 The rep card displays the following results from the data pipeline:
 
