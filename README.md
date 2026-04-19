@@ -116,7 +116,7 @@ GEMINI_API_KEY=your_gemini_api_key
 There are four data collection scripts. Run them in this order:
 
 ### Step 1 — Scrape Bioguide member bios
-Scrapes the Bioguide website using Playwright to collect biographical data for all historical US representatives. Stores records in the `Reps` DynamoDB table.
+Scrapes the [Bioguide website](https://bioguide.congress.gov) using Playwright to collect biographical data for all historical US representatives. Stores records in the `Reps` DynamoDB table.
 
 ```bash
 python ingestion/bioguide_members.py --letters A-Z --table Reps --region us-east-2
@@ -131,7 +131,7 @@ python ingestion/bioguide_members.py --letters A-Z --table Reps --region us-east
 | `--stop-after-misses` | 3 | Stop after N consecutive misses |
 
 ### Step 2 — Fetch current members from Congress.gov API
-Fetches current members for a given congress from the Congress.gov API and updates missing fields in the `Reps` table. Never overwrites existing data.
+Fetches current members for a given congress from the [Congress.gov API](https://api.congress.gov) and updates missing fields in the `Reps` table. Never overwrites existing data.
 
 ```bash
 python ingestion/current_reps_ingestion.py --congress 119 --table Reps
@@ -189,10 +189,10 @@ Open browser console and run:
 ```javascript
 fetch("https://e7hb257lv6.execute-api.us-east-2.amazonaws.com/prod/reps/map?congress=119&chamber=house")
   .then(r => r.json())
-  .then(d => console.log(`✅ ${d.count} representatives loaded`))
-  .catch(e => console.error("❌ API error:", e));
+  .then(d => console.log(`${d.count} representatives loaded`))
+  .catch(e => console.error("API error:", e));
 ```
-Expected: `✅ 435 representatives loaded`
+Expected: `435 representatives loaded`
 
 ---
 
@@ -231,6 +231,27 @@ python senator_graph/identify_clusters.py
 python -m pytest tests/test_senator_graph.py -v
 ```
 
+### Frontend AI Chatbot Test
+
+To verify the Gemini AI chatbot is working correctly:
+
+1. Open `frontend/congress-map.html` in your browser
+2. Click any state on the map
+3. Click any representative dot
+4. Scroll down to the rep card
+5. Type a question in the chat box (e.g. "What are this senator's key positions?")
+6. Expected: AI responds within 2-3 seconds with relevant information
+
+To use a different Gemini API key, update this line in `frontend/congress-map.html`:
+```javascript
+const GEMINI_KEY = "your_api_key_here";
+```
+
+To use a different Gemini model, update this line:
+```javascript
+const model = "gemini-3-flash-preview"; // replace with any available Gemini model
+```
+
 ---
 
 ## 4. Data Exploration / Visualization
@@ -243,6 +264,26 @@ Open `frontend/congress-map.html` directly in a browser, or run a local server:
 python3 -m http.server 8000
 # Open: http://localhost:8000/frontend/congress-map.html
 ```
+
+To explore different datasets, use the dropdown filters on the map:
+- **Chamber** — switch between `House` and `Senate`
+- **Congress** — browse any Congress from `1st (1789)` to `119th (2027)`
+
+Or query the API directly with different parameters:
+```bash
+# House members for 118th Congress
+curl "http://localhost:5001/reps/map?congress=118&chamber=house"
+
+# Senate members for 117th Congress
+curl "http://localhost:5001/reps/map?congress=117&chamber=senate"
+```
+
+**Visualization test:**
+1. Open `frontend/congress-map.html` in browser
+2. Select **Senate** from Chamber dropdown
+3. Select **118th Congress** from Congress dropdown
+4. Click any state — verify dots appear for each senator
+5. Hover over a dot — verify name tooltip appears
 
 **Map Features:**
 
@@ -328,11 +369,40 @@ curl "http://localhost:5001/reps/W000817"
 
 When a user clicks a representative dot on the map, a rep card appears below with an AI chatbot. The chatbot uses Google Gemini API with the representative's data as context.
 
-**To test:**
+The rep card displays the following results from the data pipeline:
+
+| Field | Source | Format |
+|-------|--------|--------|
+| Photo | AWS DynamoDB | Image URL |
+| Name | AWS DynamoDB | String |
+| Party | AWS DynamoDB | Republican / Democrat / Independent |
+| House/Senate history | AWS DynamoDB | State, District, Congress range, Years |
+| Born date | AWS DynamoDB | MM-DD-YYYY |
+| Died date | AWS DynamoDB | MM-DD-YYYY (if applicable) |
+| AI response | Google Gemini API | Natural language text |
+
+**To test with a small sample:**
 1. Open `frontend/congress-map.html` in browser
-2. Click any state → click any dot → scroll down to rep card
-3. Click a suggestion chip or type a question
-4. Expected: AI responds within 2–3 seconds
+2. Call the API with a small sample (1 state):
+```bash
+curl "http://localhost:5001/reps/map?congress=119&chamber=senate" | python3 -m json.tool
+```
+3. Verify the response has fields: `name`, `party`, `state`, `birth`, `image`, `terms`
+4. Click **Wyoming** on the map (only 1 rep — smallest sample)
+5. Click the dot → verify rep card shows photo, name, party, born date
+6. Type a question in AI chat → verify response appears
+
+**To test with different congress results:**
+```bash
+# 119th Congress Senate
+curl "http://localhost:5001/reps/map?congress=119&chamber=senate"
+
+# 118th Congress House
+curl "http://localhost:5001/reps/map?congress=118&chamber=house"
+
+# Search specific rep
+curl "http://localhost:5001/reps?name=Warren"
+```
 
 ### API Verification Test
 
