@@ -591,7 +591,7 @@ async function askAI(q){
   const rep=currentRep;
   const systemPrompt=`You are a helpful assistant answering questions about ${rep.name||"this US Congress member"}. Known info: Party: ${rep.party||"?"}, State: ${rep.state||"?"}, District: ${rep.district||"N/A"}, Birth: ${rep.birth||"?"}, Bio: ${rep.bio||"Not available"}. Be concise and factual.`;
   try{
-    const GEMINI_KEY="AIzaSyA6XLmH4TyqZgtQHRyqJk2i55DmZk8_bgk";
+    const GEMINI_KEY = "YOUR_GEMINI_API_KEY_HERE";
     const fullContents = aiHistory.length === 1
       ? [{role:"user", parts:[{text: systemPrompt + "\n\n" + q}]}]
       : [{role:"user", parts:[{text: systemPrompt}]}, ...aiHistory];
