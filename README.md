@@ -11,8 +11,14 @@ A full-stack platform for exploring US Congressional data. Collects representati
 ```
 us-congress-map/
 ├── frontend/                           # Interactive map dashboard
-│   ├── congress-map.html               # Standalone map + rep card + AI chatbot
-│   └── test_frontend.js                # Frontend unit tests (28 tests)
+│   ├── congress-map.html               # Single-file version (used on staging)
+│   ├── index.html                      # Separated version entry point
+│   ├── styles.css                      # All CSS styles
+│   ├── data.js                         # Static data (districts, capitals, state names)
+│   ├── map.js                          # D3 map rendering, zoom, dots, API fetch
+│   ├── repcard.js                      # Representative card display logic
+│   ├── chatbot.js                      # Gemini AI chatbot (Semester 1 prototype)
+│   └── test_frontend.js                # Frontend unit tests (29 tests)
 ├── docs/                               # Documentation
 │   ├── architecture.md                 # System architecture diagram
 │   └── api-reference.md                # API endpoints reference
