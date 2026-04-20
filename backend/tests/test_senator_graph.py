@@ -8,7 +8,6 @@
 #  Run with:
 #    python -m pytest tests/test_senator_graph.py -v
 
-import json
 import networkx as nx
 
 
