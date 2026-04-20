@@ -5,7 +5,7 @@
 This project makes U.S. Congressional legislative data accessible to the public through graph-based data modeling, interactive visualization, and a conversational AI chatbot.
 
 - **Aditi Reddy Doma** — Data ingestion, Interactive US Map, Semester 2 GraphRAG chatbot
-- **Sai Kiran Gopu** — REST API, Senate co-sponsorship graph, Community detection, Semester 2 evaluation framework
+- **Sai Kiran Gopu** — Data Pipeline, REST API, Neo4j Graph Analysis
 
 ---
 
