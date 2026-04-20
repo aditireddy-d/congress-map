@@ -407,6 +407,6 @@ GitHub Actions runs automatically on every push:
 
 | Name | Role |
 |------|------|
-| **Aditi Reddy Doma** | Frontend — Interactive Congress Map, AI Chatbot Integration |
+| **Aditi Reddy Doma** | Frontend — Interactive Congress Map, AI Chatbot Integration, Graph Network Construction|
 | **Sai Kiran Gopu** | Backend — Data Pipeline, REST API, Neo4j Graph Analysis |
 | **Professor Tony Harkin** | Project Advisor |
