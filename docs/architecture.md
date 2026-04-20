@@ -4,7 +4,7 @@
 
 This project makes U.S. Congressional legislative data accessible to the public through graph-based data modeling, interactive visualization, and a conversational AI chatbot.
 
-- **Aditi Reddy Doma** — Data ingestion, Interactive US Map, Semester 2 GraphRAG chatbot
+- **Aditi Reddy Doma** — Interactive Congress Map, AI Chatbot Integration, Graph Network Construction
 - **Sai Kiran Gopu** — Data Pipeline, REST API, Neo4j Graph Analysis
 
 ---
