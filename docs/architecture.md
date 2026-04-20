@@ -2,101 +2,177 @@
 
 ## Overview
 
-The US Congress Analytics platform consists of four main components that work together to collect, store, analyze, and visualize congressional data.
+This project makes U.S. Congressional legislative data accessible to the public through graph-based data modeling, interactive visualization, and a conversational AI chatbot.
+
+- **Aditi Reddy Doma** — Data ingestion, Interactive US Map, Semester 2 GraphRAG chatbot
+- **Sai Kiran Gopu** — REST API, Senate co-sponsorship graph, Community detection, Semester 2 evaluation framework
+
+---
+
+## Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        DATA SOURCES                          │
-│   Bioguide Website        Congress.gov API                   │
-│   (biographical data)     (members + bills)                  │
-└──────────────┬──────────────────────┬───────────────────────┘
-               │                      │
-               ▼                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│                     INGESTION LAYER                          │
-│   bioguide_members.py    current_reps_ingestion.py           │
-│   bills_senate.py        populate_repterms.py                │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      AWS DYNAMODB                            │
-│   Reps table             RepTerms table     Bills table      │
-│   (biographical data)    (fast map queries) (senate bills)   │
-└────────────┬─────────────────────────────────┬──────────────┘
-             │                                 │
-             ▼                                 ▼
-┌────────────────────────┐      ┌──────────────────────────────┐
-│     REST API (Flask)   │      │    SENATOR GRAPH PIPELINE     │
-│     api/main.py        │      │    build_graph.py             │
-│                        │      │    load_neo4j.py              │
-│  /reps/map             │      │    run_clustering_v2.py       │
-│  /reps/congresses      │      │    identify_clusters.py       │
-│  /reps?name=...        │      └──────────────┬───────────────┘
-│  /reps/<id>            │                     │
-└────────────┬───────────┘                     ▼
-             │                    ┌────────────────────────────┐
-             │                    │       NEO4J AURADB          │
-             │                    │  Senator nodes             │
-             │                    │  Co-sponsorship edges      │
-             │                    │  Community clusters        │
-             │                    └──────────────┬─────────────┘
-             │                                   │
-             ▼                                   ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    FRONTEND DASHBOARD                         │
-│              frontend/congress-map.html                       │
-│                                                              │
-│   ┌─────────────────────┐    ┌──────────────────────────┐   │
-│   │   Interactive Map    │    │      Rep Card + Chatbot   │   │
-│   │   D3.js + TopoJSON  │    │   Semester 1: Gemini API  │   │
-│   │   50 states         │    │   Semester 2: GraphRAG    │   │
-│   │   Zoom + dots       │    │   (Neo4j grounded)        │   │
-│   └─────────────────────┘    └──────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          DATA SOURCES                                    │
+│         Bioguide API                    Congress.gov API                 │
+│   (12,310 members, 119 Congresses)   (119th Congress members + bills)   │
+└──────────────┬──────────────────────────────────┬───────────────────────┘
+               │                                  │
+               ▼                                  ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        DATA INGESTION (Aditi)                            │
+│   bioguide_members.py         current_reps_ingestion.py                  │
+│   populate_repterms.py        bills_senate.py                            │
+└──────────────────────────────────┬──────────────────────────────────────┘
+                                   │
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        AWS DYNAMODB                                      │
+│                                                                          │
+│  Reps table          RepTerms table         SenateBills table            │
+│  (12,310 records)    (49,778 records)       (Senate bills +              │
+│  one record/person   one record/term        sponsors/co-sponsors)        │
+│  full bio data       congress, chamber,                                  │
+│                      bioguideId                                          │
+└──────────┬───────────────────────────────────────────┬───────────────────┘
+           │                                           │
+           ▼                                           ▼
+┌──────────────────────────┐           ┌───────────────────────────────────┐
+│  REST API (Sai Kiran)    │           │  CO-SPONSORSHIP GRAPH (Sai Kiran) │
+│  Python 3.12 AWS Lambda  │           │  build_graph.py                   │
+│  1024MB, 29s timeout     │           │  load_neo4j.py                    │
+│  Flask + serverless-wsgi │           │  run_clustering_v2.py             │
+│  API Gateway (us-east-2) │           │  analyze_clusters.py              │
+│                          │           │  identify_clusters.py             │
+│  GET /reps/map           │           └──────────────────┬────────────────┘
+│  GET /reps/congresses    │                              │
+└──────────┬───────────────┘                              ▼
+           │                              ┌───────────────────────────────────┐
+           │                              │       NEO4J AURA DB               │
+           │                              │  Senator nodes (100 senators)     │
+           │                              │  Properties: bioguideId, name,    │
+           │                              │  state, party, community          │
+           │                              │  CO_SPONSORS edges (weight =      │
+           │                              │  number of bills co-sponsored)    │
+           │                              │  Centrality metrics: degree,      │
+           │                              │  closeness, eigenvector           │
+           │                              └──────────────────┬────────────────┘
+           │                                                 │
+           ▼                                                 ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                     FRONTEND DASHBOARD (Aditi)                           │
+│                     frontend/congress-map.html                           │
+│                                                                          │
+│  ┌────────────────────────────┐    ┌──────────────────────────────────┐  │
+│  │   Interactive US Map       │    │    Rep Card + AI Chatbot         │  │
+│  │   D3.js + TopoJSON         │    │                                  │  │
+│  │   50 states colored        │    │  Semester 1: Gemini API chatbot  │  │
+│  │   Rep count badges         │    │  (bio, party, state as context)  │  │
+│  │   Zoom + dots per rep      │    │                                  │  │
+│  │   Blue=Dem, Red=Rep        │    │  Semester 2: GraphRAG chatbot    │  │
+│  │   Hover tooltips           │    │  grounded in Neo4j graph         │  │
+│  │   Name scroll list         │    │  e.g. "Which NY senators support │  │
+│  │                            │    │  AI research?"                   │  │
+│  │   Semester 2:              │    │                                  │  │
+│  │   Community cluster        │    │                                  │  │
+│  │   overlays on map          │    │                                  │  │
+│  └────────────────────────────┘    └──────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│              SEMESTER 2 EVALUATION FRAMEWORK (Sai Kiran)                 │
+│   Measures chatbot accuracy: context adherence, hallucination rate       │
+│   Quantitative comparison: Baseline LLM vs GraphRAG                     │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Data Flow
+---
 
-### Map Data Flow
-1. User opens `congress-map.html`
-2. Browser fetches US map shapes from TopoJSON CDN
-3. D3.js renders 50 states with pastel colors
-4. Frontend calls REST API: `GET /reps/map?congress=119&chamber=house`
-5. API queries DynamoDB RepTerms table
-6. Returns list of representatives with party, state, district, bio
-7. D3.js places colored dots on the map
+## DynamoDB Design
 
-### Rep Card Data Flow
-1. User clicks a dot on the map
-2. Rep card appears below the map
-3. Shows photo, name, party, chamber history, born/died dates
-4. User types question in AI chat
-5. **Semester 1:** Gemini API generates response using rep's bio as context
-6. **Semester 2:** GraphRAG queries Neo4j graph → retrieves relevant senators and co-sponsorships → LLM generates grounded response
+### Why Two Tables?
 
-### Graph Pipeline Data Flow
-1. Bills ingested from Congress.gov API
-2. Co-sponsorships extracted from bill data
-3. NetworkX graph built: senators = nodes, co-sponsorships = weighted edges
-4. Community detection algorithms run (Louvain, Label Propagation, Spectral, Greedy)
-5. Clusters identified and labeled
-6. Graph loaded into Neo4j AuraDB
-7. Interactive HTML visualization generated
+The original design stored all terms as a nested list inside each representative record. This required a full scan of 12,310 records per map request, taking ~7 seconds.
+
+The normalized two-table design:
+1. Queries `RepTerms` first → retrieves only relevant bioguideIds (e.g. 437 for a House request)
+2. Calls `BatchGetItem` on `Reps` → fetches only those records
+
+**Result: response time reduced from ~7 seconds to under 1 second.**
+
+| Table | Records | Description |
+|-------|---------|-------------|
+| `Reps` | 12,310 | One record per person, full biographical data |
+| `RepTerms` | 49,778 | One record per congress term (congress, chamber, bioguideId) |
+| `SenateBills` | varies | Senate bills with sponsor and co-sponsor bioguideIds |
+
+---
+
+## REST API
+
+- **Runtime:** Python 3.12 AWS Lambda
+- **Memory:** 1024 MB, 29-second timeout
+- **Region:** us-east-2
+- **Framework:** Flask + serverless-wsgi + Serverless Framework v4
+- **Deploy:** `sls deploy --stage prod` from `api/` directory
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /reps/map?congress=119&chamber=senate` | All members for given congress and chamber |
+| `GET /reps/congresses` | Available congress numbers (1–119) for dropdown |
+
+**Live API:**
+```
+https://e7hb257lv6.execute-api.us-east-2.amazonaws.com/prod/reps/map?congress=119&chamber=senate
+```
+
+---
+
+## Senate Co-Sponsorship Graph
+
+### Nodes
+100 senators of the 119th Congress with properties:
+- `bioguideId`, `name`, `state`, `party`, `community`
+
+### Edges
+`CO_SPONSORS` edges with:
+- `weight` = number of bills co-sponsored together
+- `direction` = sponsor–co-sponsor relationship
+
+### Centrality Metrics (pre-computed at build time)
+| Metric | Description |
+|--------|-------------|
+| **Degree** | Number of distinct co-sponsorship partners |
+| **Closeness** | Inverse mean shortest path to all other senators |
+| **Eigenvector** | Influence weighted by neighbors' influence |
+
+### Community Detection Algorithms
+| Algorithm | Method |
+|-----------|--------|
+| **Louvain** | Greedy modularity maximization (primary) |
+| **Label Propagation** | Each node adopts neighbors' most frequent label |
+| **Girvan-Newman** | Iteratively removes highest-betweenness edges |
+| **Spectral** | Cross-validation algorithm |
+
+Convergence of cluster assignments across all four indicates genuine community structure rather than algorithmic artifact.
+
+---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | HTML5, CSS3, JavaScript (ES6+) |
-| Map Rendering | D3.js v7 + TopoJSON v3 |
+| Component | Technology |
+|-----------|------------|
+| Frontend | JavaScript, HTML5, CSS3 |
+| Map Library | D3.js v7 + TopoJSON v3 |
 | AI Chatbot (S1) | Google Gemini API |
 | AI Chatbot (S2) | GraphRAG + Neo4j |
-| REST API | Flask 3.0 + AWS Lambda |
-| Primary Database | AWS DynamoDB |
+| Backend | Python 3.12 + Flask |
+| Serverless | AWS Lambda + API Gateway |
+| Database | AWS DynamoDB |
 | Graph Database | Neo4j AuraDB |
-| Graph Analysis | NetworkX + scikit-learn |
-| Data Collection | Playwright + Requests |
-| Testing | Pytest + moto |
+| Graph Analysis | NetworkX, scikit-learn |
+| Data Collection | Playwright, Requests |
+| Testing | Pytest, moto |
 | CI/CD | GitHub Actions |
 | Hosting | AWS S3 + CloudFront |
