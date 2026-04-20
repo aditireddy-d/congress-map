@@ -28,14 +28,3 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["backend"]
 include = ["api*", "ingestion*", "senator_graph*", "tests*"]
-
-[tool.flake8]
-max-line-length = 100
-extend-ignore = E266
-exclude = [
-    "__pycache__",
-    ".venv",
-    "venv",
-    "backend/senator_graph/lib",
-    "backend/senator_graph/visualize_interactive_v5.py",
-]
