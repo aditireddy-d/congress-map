@@ -21,7 +21,6 @@ us-congress-map/
 │   └── test_frontend.js                # Frontend unit tests (29 tests)
 ├── docs/                               # Documentation
 │   ├── architecture.md                 # System architecture diagram
-│   └── api-reference.md                # API endpoints reference
 ├── api/                                # REST API (Flask + AWS Lambda)
 │   └── main.py
 ├── ingestion/                          # Data collection scripts
