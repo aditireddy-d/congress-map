@@ -10,7 +10,7 @@
  * Depends on: repcard.js (currentRep, aiHistory)
  */
 
-const GEMINI_KEY   = "AIzaSyA6XLmH4TyqZgtQHRyqJk2i55DmZk8_bgk";
+const GEMINI_KEY = "YOUR_GEMINI_API_KEY_HERE";
 const GEMINI_MODEL = "gemini-3-flash-preview";
 const GEMINI_URL   = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`;
 
