@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>US Congress</title>
+
+  <!-- External Libraries (CDN) -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson@3"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Local Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Top Bar: Title + Dropdowns -->
+<div class="top-bar">
+  <h1 class="top-title">US Congress</h1>
+  <div class="controls">
+    <div class="control-group">
+      <label for="chamber-select">Chamber</label>
+      <select id="chamber-select">
+        <option value="house">House</option>
+        <option value="senate">Senate</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="congress-select">Congress</label>
+      <select id="congress-select"></select>
+    </div>
+  </div>
+</div>
+
+<!-- Back Button (shown when zoomed into a state) -->
+<button id="back-btn">← Back to US Map</button>
+
+<!-- Map Card -->
+<div id="map-card">
+  <div id="spinner"><div class="spin-ring"></div></div>
+  <div id="map"></div>
+  <!-- Name scroll list (shown when zoomed in) -->
+  <div id="name-list">
+    <div class="name-list-title" id="name-list-title">Representatives</div>
+    <div id="name-list-items"></div>
+  </div>
+</div>
+
+<!-- Representative Card (shown below map when a dot is clicked) -->
+<div id="rep-section">
+  <div class="rep-card">
+
+    <!-- Top: Rep Info -->
+    <div class="rep-left">
+      <img class="rep-photo" id="rc-photo" src="" alt="Photo"
+           onerror="this.src='https://via.placeholder.com/100?text=?'" />
+      <div class="rep-header-info">
+        <div class="rep-name" id="rc-name"></div>
+        <div class="rep-badges" id="rc-badges"></div>
+        <div class="rep-details-grid" id="rc-details"></div>
+      </div>
+    </div>
+
+    <!-- Bottom: AI Chatbot -->
+    <div class="rep-right">
+      <div class="ai-header">
+        <div class="ai-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+          </svg>
+        </div>
+        <div class="ai-header-text">
+          <div class="ai-heading">Ask AI</div>
+          <div class="ai-subheading" id="ai-subheading">Ask anything about this representative</div>
+        </div>
+      </div>
+      <div class="ai-chips" id="ai-chips"></div>
+      <div class="ai-msgs" id="ai-msgs"></div>
+      <div class="ai-row">
+        <input class="ai-input" id="ai-input" type="text"
+               placeholder="Ask anything about this representative..." />
+        <button class="ai-btn" id="ai-btn">Ask →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Local Scripts (order matters!) -->
+<script src="data.js"></script>      <!-- Static data tables -->
+<script src="repcard.js"></script>   <!-- Rep card display -->
+<script src="chatbot.js"></script>   <!-- AI chatbot -->
+<script src="map.js"></script>       <!-- Map rendering (loads last) -->
+
+</body>
+</html>
