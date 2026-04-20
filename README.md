@@ -9,9 +9,13 @@ A full-stack platform for exploring US Congressional data. Collects representati
 ## Project Structure
 
 ```
-us-congress-analytics/
+us-congress-map/
 ├── frontend/                           # Interactive map dashboard
-│   └── congress-map.html               # Standalone map + rep card + AI chatbot
+│   ├── congress-map.html               # Standalone map + rep card + AI chatbot
+│   └── test_frontend.js                # Frontend unit tests (28 tests)
+├── docs/                               # Documentation
+│   ├── architecture.md                 # System architecture diagram
+│   └── api-reference.md                # API endpoints reference
 ├── api/                                # REST API (Flask + AWS Lambda)
 │   └── main.py
 ├── ingestion/                          # Data collection scripts
