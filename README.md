@@ -1,10 +1,6 @@
 # US Congress Analytics & Interactive Map
 
-A full-stack platform for exploring US Congressional data. Collects representative
-and bill data from public APIs, stores it in AWS DynamoDB, builds a Senate
-co-sponsorship graph in Neo4j, runs community detection algorithms to identify
-senator clusters, and visualizes everything through an interactive map dashboard
-with an AI-powered chatbot.
+A full-stack platform for exploring US Congressional data. Collects representative and bill data from public APIs, stores it in AWS DynamoDB, builds a Senate co-sponsorship graph in Neo4j, runs community detection algorithms to identify senator clusters, and visualizes everything through an interactive map dashboard with an AI-powered chatbot.
 
 **Live Demo:** https://staging.icitizen.com/congress-map
 
@@ -13,7 +9,7 @@ with an AI-powered chatbot.
 ## Project Structure
 
 ```
-congress-map/
+us-congress-map/
 ├── frontend/                           # Interactive map dashboard
 │   ├── congress-map.html               # Single-file version (used on staging)
 │   ├── index.html                      # Separated version entry point
@@ -23,27 +19,27 @@ congress-map/
 │   ├── repcard.js                      # Representative card display logic
 │   ├── chatbot.js                      # Gemini AI chatbot (Semester 1 prototype)
 │   └── test_frontend.js                # Frontend unit tests (29 tests)
-├── backend/                            # Data pipeline, REST API, graph analysis
-│   ├── api/                            # REST API (Flask + AWS Lambda)
-│   │   └── main.py
-│   ├── ingestion/                      # Data collection scripts
-│   │   ├── bioguide_members.py         # Scrapes Bioguide website for member bios
-│   │   ├── current_reps_ingestion.py   # Fetches current members from Congress.gov
-│   │   ├── populate_repterms.py        # Populates RepTerms table from Reps table
-│   │   └── bills_senate.py             # Fetches Senate bills from Congress.gov
-│   ├── senator_graph/                  # Neo4j graph + community detection
-│   │   ├── build_graph.py              # Builds co-sponsorship graph
-│   │   ├── load_neo4j.py               # Loads graph into Neo4j
-│   │   ├── identify_clusters.py        # Runs community detection algorithms
-│   │   ├── run_clustering_v2.py        # Executes clustering pipeline
-│   │   ├── analyze_clusters.py         # Analyzes cluster results
-│   │   └── visualize_interactive_v5.py # Generates interactive HTML visualization
-│   └── tests/                          # Pytest test suite (75 tests)
-│       ├── test_api.py                 # REST API route and helper tests
-│       ├── test_ingestion.py           # Data ingestion and format validation tests
-│       └── test_senator_graph.py       # Graph construction and clustering tests
 ├── docs/                               # Documentation
-│   └── architecture.md                 # System architecture diagram
+│   ├── architecture.md                 # System architecture diagram
+│   └── api-reference.md                # API endpoints reference
+├── api/                                # REST API (Flask + AWS Lambda)
+│   └── main.py
+├── ingestion/                          # Data collection scripts
+│   ├── bioguide_members.py             # Scrapes Bioguide website for member bios
+│   ├── current_reps_ingestion.py       # Fetches current members from Congress.gov
+│   ├── populate_repterms.py            # Populates RepTerms table from Reps table
+│   └── bills_senate.py                 # Fetches Senate bills from Congress.gov
+├── senator_graph/                      # Neo4j graph + community detection
+│   ├── build_graph.py                  # Builds co-sponsorship graph
+│   ├── load_neo4j.py                   # Loads graph into Neo4j
+│   ├── identify_clusters.py            # Runs community detection algorithms
+│   ├── run_clustering_v2.py            # Executes clustering pipeline
+│   ├── analyze_clusters.py             # Analyzes cluster results
+│   └── visualize_interactive_v5.py     # Generates interactive HTML visualization
+├── tests/                              # Pytest test suite (75 tests)
+│   ├── test_api.py                     # REST API route and helper tests
+│   ├── test_ingestion.py               # Data ingestion and format validation tests
+│   └── test_senator_graph.py           # Graph construction and clustering tests
 ├── .github/workflows/                  # GitHub Actions CI/CD
 ├── requirements.txt                    # Python dependencies
 ├── pyproject.toml                      # Project metadata
@@ -70,7 +66,7 @@ congress-map/
 | API | Purpose |
 |-----|---------|
 | AWS API Gateway | Fetches representative data from DynamoDB |
-| Google Gemini API | AI chatbot (gemini-3-flash-preview) |
+| Google Gemini API | AI chatbot (`gemini-3-flash-preview`) |
 | US Atlas TopoJSON CDN | US state map shapes |
 
 ### Backend
@@ -98,8 +94,8 @@ congress-map/
 
 ```bash
 # Clone the repository
-git clone https://github.com/aditireddy-d/congress-map.git
-cd congress-map
+git clone https://github.com/your-team/us-congress-analytics.git
+cd us-congress-analytics
 
 # Create and activate virtual environment
 python -m venv venv
@@ -113,7 +109,7 @@ python -m pip install -r requirements.txt
 playwright install chromium
 ```
 
-**Environment Variables** — create a `.env` file inside `backend/`:
+**Environment Variables** — create a `.env` file at the root:
 
 ```
 CONGRESS_API_KEY=your_congress_api_key
@@ -125,18 +121,29 @@ GEMINI_API_KEY=your_gemini_api_key
 
 ---
 
-## 2. Data Collection / Preparation
+## Sample Data
 
-There are four data collection scripts. Run them in this order from the repo root:
-
-### Step 1 — Scrape Bioguide member bios
-
-Scrapes the [Bioguide website](https://bioguide.congress.gov) using Playwright
-to collect biographical data for all historical US representatives. Stores
-records in the `Reps` DynamoDB table.
+A small sample dataset is included in the `data/` folder for testing without AWS credentials:
 
 ```bash
-python backend/ingestion/bioguide_members.py --letters A-Z --table Reps --region us-east-2
+# View sample representative records
+cat data/sample_reps.json
+```
+
+The full dataset (12,310 records) lives in AWS DynamoDB and requires credentials.
+See Section 2 below for full ingestion instructions.
+
+---
+
+## 2. Data Collection / Preparation
+
+There are four data collection scripts. Run them in this order:
+
+### Step 1 — Scrape Bioguide member bios
+Scrapes the [Bioguide website](https://bioguide.congress.gov) using Playwright to collect biographical data for all historical US representatives. Stores records in the `Reps` DynamoDB table.
+
+```bash
+python ingestion/bioguide_members.py --letters A-Z --table Reps --region us-east-2
 ```
 
 | Argument | Default | Description |
@@ -148,15 +155,13 @@ python backend/ingestion/bioguide_members.py --letters A-Z --table Reps --region
 | `--stop-after-misses` | 3 | Stop after N consecutive misses |
 
 ### Step 2 — Fetch current members from Congress.gov API
-
-Fetches current members for a given congress from the Congress.gov API and
-updates missing fields in the `Reps` table. Never overwrites existing data.
+Fetches current members for a given congress from the [Congress.gov API](https://api.congress.gov) and updates missing fields in the `Reps` table. Never overwrites existing data.
 
 ```bash
-python backend/ingestion/current_reps_ingestion.py --congress 119 --table Reps
+python ingestion/current_reps_ingestion.py --congress 119 --table Reps
 
 # Preview changes without writing to DynamoDB
-python backend/ingestion/current_reps_ingestion.py --congress 119 --table Reps --dry-run
+python ingestion/current_reps_ingestion.py --congress 119 --table Reps --dry-run
 ```
 
 | Argument | Default | Description |
@@ -167,29 +172,24 @@ python backend/ingestion/current_reps_ingestion.py --congress 119 --table Reps -
 | `--dry-run` | false | Preview without writing to DynamoDB |
 
 ### Step 3 — Populate RepTerms table
-
-Reads all records from the `Reps` table and creates one record per congress
-term per representative in the `RepTerms` table. Enables fast map queries
-(under 1 second instead of 7 seconds).
+Reads all records from the `Reps` table and creates one record per congress term per representative in the `RepTerms` table. Enables fast map queries (under 1 second instead of 7 seconds).
 
 ```bash
-python backend/ingestion/populate_repterms.py
+python ingestion/populate_repterms.py
 ```
 
 ### Step 4 — Fetch Senate bills
-
-Fetches Senate bills from the Congress.gov API into the `bills` DynamoDB table.
-Supports incremental updates.
+Fetches Senate bills from the Congress.gov API into the `bills` DynamoDB table. Supports incremental updates.
 
 ```bash
 # Fetch latest 100 bills
-python backend/ingestion/bills_senate.py --congress 119 --table bills --total 100
+python ingestion/bills_senate.py --congress 119 --table bills --total 100
 
 # Full ingestion
-python backend/ingestion/bills_senate.py --congress 119 --table bills --full
+python ingestion/bills_senate.py --congress 119 --table bills --full
 
 # Incremental from a specific date
-python backend/ingestion/bills_senate.py --congress 119 --table bills \
+python ingestion/bills_senate.py --congress 119 --table bills \
     --from-date 2025-01-01T00:00:00Z
 ```
 
@@ -204,11 +204,10 @@ python backend/ingestion/bills_senate.py --congress 119 --table bills \
 ### Data Verification Test
 
 ```bash
-python -m pytest backend/tests/test_ingestion.py -v
+python -m pytest tests/test_ingestion.py -v
 ```
 
 ### Frontend API Verification
-
 Open browser console and run:
 
 ```javascript
@@ -223,58 +222,61 @@ Expected: `435 representatives loaded`
 
 ## 3. Model Training — Senate Co-sponsorship Graph
 
-Builds a weighted graph where each node is a senator and each edge represents
-the number of bills they co-sponsored together. Runs community detection
-algorithms to identify clusters of senators with shared policy interests.
+Builds a weighted graph where each node is a senator and each edge represents the number of bills they co-sponsored together. Runs community detection algorithms to identify clusters of senators with shared policy interests.
 
 ### Step 1 — Build the co-sponsorship graph
 
 ```bash
-python backend/senator_graph/build_graph.py
+python senator_graph/build_graph.py
 ```
 
 ### Step 2 — Load graph into Neo4j
 
 ```bash
-python backend/senator_graph/load_neo4j.py
+python senator_graph/load_neo4j.py
 ```
 
 ### Step 3 — Run community detection
-
-Runs Louvain, Label Propagation, Spectral Clustering, and Greedy Modularity
-algorithms:
+Runs Louvain, Label Propagation, Spectral Clustering, and Greedy Modularity algorithms:
 
 ```bash
-python backend/senator_graph/run_clustering_v2.py
+python senator_graph/run_clustering_v2.py
 ```
 
 ### Step 4 — Identify and label clusters
 
 ```bash
-python backend/senator_graph/identify_clusters.py
+python senator_graph/identify_clusters.py
 ```
 
 ### Model Verification Test
 
 ```bash
-python -m pytest backend/tests/test_senator_graph.py -v
+python -m pytest tests/test_senator_graph.py -v
 ```
 
 ### Frontend AI Chatbot Test
 
-> **Note:** The current chatbot is a **Semester 1 prototype** using Google Gemini API
-> with the representative's biographical data as context. The **Semester 2**
-> implementation will replace this with a **GraphRAG chatbot** grounded in the
-> Neo4j Senate co-sponsorship graph, enabling natural language queries like
-> *"Which senators support AI research for NY?"*.
+> **Note:** The current chatbot is a **Semester 1 prototype** using Google Gemini API with the representative's biographical data as context. The **Semester 2** implementation will replace this with a **GraphRAG chatbot** grounded in Sai Kiran's Neo4j Senate co-sponsorship graph, enabling natural language queries like *"Which senators support AI research for NY?"* and reducing hallucinations compared to the baseline Gemini model.
 
-To verify the Gemini AI chatbot:
+To verify the Gemini AI chatbot is working correctly:
+
 1. Open `frontend/congress-map.html` in your browser
 2. Click any state on the map
 3. Click any representative dot
 4. Scroll down to the rep card
-5. Type a question (e.g. "What are this senator's key positions?")
-6. Expected: AI responds within 2-3 seconds
+5. Type a question in the chat box (e.g. "What are this senator's key positions?")
+6. Expected: AI responds within 2-3 seconds with relevant information
+
+To use a different Gemini API key, update this line in `frontend/congress-map.html`:
+```javascript
+const GEMINI_KEY = "your_api_key_here";
+```
+
+To use a different Gemini model, update this line:
+```javascript
+const model = "gemini-3-flash-preview"; // replace with any available Gemini model
+```
 
 ---
 
@@ -289,6 +291,26 @@ python3 -m http.server 8000
 # Open: http://localhost:8000/frontend/congress-map.html
 ```
 
+To explore different datasets, use the dropdown filters on the map:
+- **Chamber** — switch between `House` and `Senate`
+- **Congress** — browse any Congress from `1st (1789)` to `119th (2027)`
+
+Or query the API directly with different parameters:
+```bash
+# House members for 118th Congress
+curl "http://localhost:5001/reps/map?congress=118&chamber=house"
+
+# Senate members for 117th Congress
+curl "http://localhost:5001/reps/map?congress=117&chamber=senate"
+```
+
+**Visualization test:**
+1. Open `frontend/congress-map.html` in browser
+2. Select **Senate** from Chamber dropdown
+3. Select **118th Congress** from Congress dropdown
+4. Click any state — verify dots appear for each senator
+5. Hover over a dot — verify name tooltip appears
+
 **Map Features:**
 
 | Feature | Description |
@@ -299,11 +321,16 @@ python3 -m http.server 8000
 | State zoom | Click any state to zoom in |
 | Rep dots | 🔵 Democrat · 🔴 Republican · ⚫ Independent |
 | Hover tooltip | Shows representative name on hover |
+| Name scroll list | Lists all reps for the selected state |
+
+**Dot placement:**
+- **House** — geographic centroid of each congressional district
+- **Senate** — state center (left/right for wide states, above/below for narrow)
 
 ### Senate Co-sponsorship Graph Visualization
 
 ```bash
-python backend/senator_graph/visualize_interactive_v5.py
+python senator_graph/visualize_interactive_v5.py
 # Generates senate_graph_v5.html — open in any browser
 ```
 
@@ -316,13 +343,13 @@ Features:
 ### Cluster Analysis
 
 ```bash
-python backend/senator_graph/analyze_clusters.py
+python senator_graph/analyze_clusters.py
 
 # Report for a specific algorithm only
-python backend/senator_graph/analyze_clusters.py --algo louvain_res0.5
+python senator_graph/analyze_clusters.py --algo louvain_res0.5
 
 # Include cross-party analysis
-python backend/senator_graph/analyze_clusters.py --algo louvain_res0.5 --cross-party
+python senator_graph/analyze_clusters.py --algo louvain_res0.5 --cross-party
 ```
 
 ---
@@ -336,7 +363,7 @@ The REST API exposes processed congressional data for the frontend map.
 **Run locally:**
 
 ```bash
-cd backend/api
+cd api
 python main.py
 # Runs at http://localhost:5001
 ```
@@ -354,26 +381,96 @@ python main.py
 **Example requests:**
 
 ```bash
+# Get all Senate members for the 119th Congress
 curl "http://localhost:5001/reps/map?congress=119&chamber=senate"
+
+# Search by name
 curl "http://localhost:5001/reps?name=Warren"
+
+# Get a single representative
 curl "http://localhost:5001/reps/W000817"
+```
+
+### AI Chatbot (Rep Card)
+
+The chatbot has two phases:
+
+| Phase | Semester | Technology | Description |
+|-------|----------|------------|-------------|
+| **Prototype** | Semester 1 | Google Gemini API | Basic AI chat using rep's bio, party, and state as context |
+| **GraphRAG** | Semester 2 | Neo4j + LLM | Chatbot grounded in Senate co-sponsorship graph — answers questions like *"Which senators support AI research for NY?"* |
+
+**Current implementation (Semester 1 — Gemini prototype):**
+When a user clicks a representative dot on the map, a rep card appears below with an AI chatbot. The chatbot uses Google Gemini API with the representative's biographical data as context.
+
+**Planned implementation (Semester 2 — GraphRAG):**
+The chatbot will query Sai Kiran's Neo4j co-sponsorship graph to retrieve relevant graph context before generating a response. This grounds the answers in real co-sponsorship data and reduces hallucinations compared to the baseline Gemini chatbot.
+
+The rep card displays the following results from the data pipeline:
+
+| Field | Source | Format |
+|-------|--------|--------|
+| Photo | AWS DynamoDB | Image URL |
+| Name | AWS DynamoDB | String |
+| Party | AWS DynamoDB | Republican / Democrat / Independent |
+| House/Senate history | AWS DynamoDB | State, District, Congress range, Years |
+| Born date | AWS DynamoDB | MM-DD-YYYY |
+| Died date | AWS DynamoDB | MM-DD-YYYY (if applicable) |
+| AI response | Google Gemini API | Natural language text |
+
+**To test with a small sample:**
+1. Open `frontend/congress-map.html` in browser
+2. Call the API with a small sample (1 state):
+```bash
+curl "http://localhost:5001/reps/map?congress=119&chamber=senate" | python3 -m json.tool
+```
+3. Verify the response has fields: `name`, `party`, `state`, `birth`, `image`, `terms`
+4. Click **Wyoming** on the map (only 1 rep — smallest sample)
+5. Click the dot → verify rep card shows photo, name, party, born date
+6. Type a question in AI chat → verify response appears
+
+**To test with different congress results:**
+```bash
+# 119th Congress Senate
+curl "http://localhost:5001/reps/map?congress=119&chamber=senate"
+
+# 118th Congress House
+curl "http://localhost:5001/reps/map?congress=118&chamber=house"
+
+# Search specific rep
+curl "http://localhost:5001/reps?name=Warren"
 ```
 
 ### API Verification Test
 
 ```bash
-python -m pytest backend/tests/test_api.py -v
+python -m pytest tests/test_api.py -v
 ```
 
 ### Run All Tests
 
 ```bash
-python -m pytest backend/ -v --durations=0
+python -m pytest tests/ -v --durations=0
 ```
 
-75 tests covering API routes, data format validation, graph construction, and
-clustering output. All tests run without real AWS or Neo4j connections using
-`moto` for DynamoDB mocking.
+75 tests covering API routes, data format validation, graph construction, and clustering output. All tests run without real AWS or Neo4j connections using `moto` for DynamoDB mocking.
+
+---
+
+## Documentation
+
+Frontend JSDoc documentation is auto-generated and available in the `doc/` folder:
+
+```bash
+# Open in browser
+open doc/index.html
+```
+
+To regenerate documentation after code changes:
+```bash
+npm install -g jsdoc
+jsdoc frontend/data.js frontend/map.js frontend/repcard.js frontend/chatbot.js -d doc/
+```
 
 ---
 
@@ -407,6 +504,6 @@ GitHub Actions runs automatically on every push:
 
 | Name | Role |
 |------|------|
-| **Aditi Reddy Doma** | Frontend — Interactive Congress Map, AI Chatbot Integration, Graph Network Construction|
-| **Sai Kiran Gopu** | Backend — Data Pipeline, REST API, Neo4j Graph Analysis |
+| **Aditi Reddy Doma** | Frontend — Interactive Congress Map, AI Chatbot Integration |
+| **Sai Kiran** | Backend — Data Pipeline, REST API, Neo4j Graph Analysis |
 | **Professor Tony Harkin** | Project Advisor |
