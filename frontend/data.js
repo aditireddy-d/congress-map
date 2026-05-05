@@ -1,11 +1,18 @@
 /**
- * data.js
- * Static data tables for the US Congress Map
- * Contains: state capitals, congressional district centroids,
- *           state abbreviation/name mappings, colors, and static counts
+ * @fileoverview Static data tables for the US Congress Map dashboard.
+ * Contains all geographic and reference data needed by map.js and repcard.js.
+ * This file has no dependencies and must be loaded first.
+ *
+ * @author Aditi Reddy Doma
+ * @version 2.0.0
  */
 
-// State capital lat/lng coordinates (used for Senate dot placement fallback)
+/**
+ * State capital coordinates [latitude, longitude].
+ * Used as fallback dot placement for Senate representatives
+ * when the state centroid calculation is unavailable.
+ * @constant {Object.<string, Array<number>>}
+ */
 const CAPITALS = {
   AL:[32.36,-86.28],AK:[58.30,-134.42],AZ:[33.45,-112.07],AR:[34.74,-92.33],CA:[38.56,-121.47],
   CO:[39.74,-104.98],CT:[41.77,-72.68],DE:[39.16,-75.53],FL:[30.45,-84.27],GA:[33.76,-84.39],
@@ -19,8 +26,13 @@ const CAPITALS = {
   VA:[37.54,-77.46],WA:[47.04,-122.89],WV:[38.35,-81.63],WI:[43.07,-89.38],WY:[41.15,-104.80]
 };
 
-// Congressional district geographic centroids [lat, lng]
-// Used to place House representative dots on the zoomed map
+/**
+ * Congressional district geographic centroids [latitude, longitude].
+ * Used to place House representative dots at their district location on the zoomed map.
+ * Keys are in "STATE-DISTRICT" format (e.g., "CA-12", "TX-20").
+ * Covers all 435 congressional districts as of the 119th Congress.
+ * @constant {Object.<string, Array<number>>}
+ */
 const DISTRICTS = {
   "AL-1":[31.0,-87.8],"AL-2":[31.9,-86.3],"AL-3":[32.8,-85.5],"AL-4":[34.0,-86.8],"AL-5":[34.7,-86.6],"AL-6":[33.4,-86.8],"AL-7":[32.7,-87.8],
   "AK-1":[64.2,-153.0],
@@ -74,7 +86,12 @@ const DISTRICTS = {
   "WY-1":[42.9,-107.5]
 };
 
-// State abbreviation ↔ full name mappings
+/**
+ * Mapping from state abbreviation to full state name.
+ * @constant {Object.<string, string>}
+ * @example
+ * ABBR_TO_NAME["CA"] // "California"
+ */
 const ABBR_TO_NAME = {
   AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",
   CO:"Colorado",CT:"Connecticut",DE:"Delaware",FL:"Florida",GA:"Georgia",
@@ -87,10 +104,27 @@ const ABBR_TO_NAME = {
   SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",
   VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming"
 };
+
+/**
+ * Reverse mapping from full state name to abbreviation.
+ * Derived from ABBR_TO_NAME.
+ * @constant {Object.<string, string>}
+ * @example
+ * NAME_TO_ABBR["California"] // "CA"
+ */
 const NAME_TO_ABBR = Object.fromEntries(Object.entries(ABBR_TO_NAME).map(([a,n])=>[n,a]));
 
-// Pastel colors for state map
-const PASTEL = {green:"#8cc1a5", blue:"#a8bdd0", pink:"#cb90a2", yellow:"#e6d69b"};
+/**
+ * Pastel color palette for state map coloring.
+ * @constant {Object.<string, string>}
+ */
+const PASTEL = { green:"#8cc1a5", blue:"#a8bdd0", pink:"#cb90a2", yellow:"#e6d69b" };
+
+/**
+ * Default pastel fill colors for each state on the map.
+ * Colors are assigned to create visual variety across adjacent states.
+ * @constant {Object.<string, string>}
+ */
 const DEFAULT_COLORS = {
   "Washington":PASTEL.green,"Oregon":PASTEL.blue,"California":PASTEL.pink,
   "Nevada":PASTEL.green,"Idaho":PASTEL.pink,"Montana":PASTEL.blue,
@@ -111,11 +145,21 @@ const DEFAULT_COLORS = {
   "Alaska":PASTEL.pink,"Hawaii":PASTEL.blue
 };
 
-// Static fallback rep counts (used if API fails)
+/**
+ * Static fallback House representative counts by state abbreviation.
+ * Used when the API call fails. Based on the 119th Congress apportionment.
+ * @constant {Object.<string, number>}
+ */
 const STATIC_HOUSE = {
   CA:52,TX:38,FL:28,NY:26,PA:17,IL:17,OH:15,GA:14,NC:14,MI:13,NJ:12,
   VA:11,WA:10,AZ:9,MA:9,IN:9,TN:9,MO:8,MD:8,WI:8,MN:8,CO:8,SC:7,AL:7,
   LA:6,KY:6,OR:6,OK:5,CT:5,NV:4,AR:4,IA:4,MS:4,KS:4,UT:4,NM:3,NE:3,
   ID:2,HI:2,NH:2,ME:2,RI:2,MT:2,WV:2,SD:1,ND:1,AK:1,DE:1,VT:1,WY:1
 };
+
+/**
+ * Static fallback Senate counts by state abbreviation.
+ * Always 2 senators per state. Used when the API call fails.
+ * @constant {Object.<string, number>}
+ */
 const STATIC_SENATE = Object.fromEntries(Object.keys(ABBR_TO_NAME).map(a=>[a,2]));
