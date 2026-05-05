@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Congress Map — Frontend Documentation</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #f8f9fa; color: #333; }
+  .header { background: #2c3e50; color: white; padding: 32px 48px; }
+  .header h1 { margin: 0 0 8px; font-size: 2rem; }
+  .header p { margin: 0; opacity: 0.8; font-size: 1rem; }
+  .container { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
+  .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 40px; }
+  .module-card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px; border-left: 4px solid #3498db; }
+  .module-card h2 { margin: 0 0 8px; font-size: 1.2rem; color: #2c3e50; }
+  .module-card .file { font-family: monospace; font-size: 0.85rem; color: #7f8c8d; margin-bottom: 12px; }
+  .module-card p { margin: 0 0 16px; font-size: 0.9rem; line-height: 1.6; color: #555; }
+  .module-card a { display: inline-block; background: #3498db; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; }
+  .module-card a:hover { background: #2980b9; }
+  .functions-section { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 32px; margin-bottom: 40px; }
+  .functions-section h2 { margin: 0 0 24px; color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 12px; }
+  .func { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid #ecf0f1; }
+  .func:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .func h3 { margin: 0 0 4px; font-family: monospace; font-size: 1rem; color: #2980b9; }
+  .func .source { font-size: 0.8rem; color: #7f8c8d; margin-bottom: 8px; font-family: monospace; }
+  .func p { margin: 0 0 8px; font-size: 0.9rem; color: #555; line-height: 1.6; }
+  .param-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 8px; }
+  .param-table th { background: #f8f9fa; text-align: left; padding: 8px 12px; font-weight: 600; color: #2c3e50; }
+  .param-table td { padding: 8px 12px; border-top: 1px solid #ecf0f1; vertical-align: top; }
+  .param-table td:first-child { font-family: monospace; color: #e74c3c; }
+  .param-table td:nth-child(2) { color: #7f8c8d; }
+  .returns { background: #f0f7ff; border-radius: 6px; padding: 8px 12px; font-size: 0.85rem; margin-top: 8px; }
+  .returns strong { color: #2980b9; }
+  .tag { display: inline-block; background: #eaf4fb; color: #2980b9; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; font-family: monospace; margin-right: 4px; }
+  .async-tag { background: #fef9e7; color: #f39c12; }
+  h2.section { margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>US Congress Map — Frontend Documentation</h1>
+  <p>Auto-generated JSDoc documentation for the interactive US Congress Map frontend.</p>
+  <p style="margin-top:8px; font-size:0.85rem; opacity:0.6;">Author: Aditi Reddy Doma · Version 2.0.0 · Generated May 2026</p>
+</div>
+
+<div class="container">
+
+  <!-- Module Overview -->
+  <h2 class="section">Modules</h2>
+  <div class="module-grid">
+
+    <div class="module-card">
+      <h2>data.js</h2>
+      <div class="file">frontend/data.js</div>
+      <p>Static data tables for the map. Contains state capital coordinates, congressional district centroids for all 435 districts, state abbreviation/name mappings, pastel color assignments, and static fallback representative counts.</p>
+      <a href="data.html">View Documentation →</a>
+    </div>
+
+    <div class="module-card" style="border-left-color:#27ae60;">
+      <h2>map.js</h2>
+      <div class="file">frontend/map.js</div>
+      <p>D3.js map rendering engine. Handles state rendering with pastel colors, rep count badge placement at state centroids, zoom transitions into individual states, and representative dot placement at district coordinates.</p>
+      <a href="map.html" style="background:#27ae60;">View Documentation →</a>
+    </div>
+
+    <div class="module-card" style="border-left-color:#8e44ad;">
+      <h2>repcard.js</h2>
+      <div class="file">frontend/repcard.js</div>
+      <p>Representative card display logic. Renders the biographical card below the map when a dot is clicked, showing photo, party badge, full chamber history across all terms, and born/died dates formatted as MM-DD-YYYY.</p>
+      <a href="repcard.html" style="background:#8e44ad;">View Documentation →</a>
+    </div>
+
+    <div class="module-card" style="border-left-color:#e67e22;">
+      <h2>chatbot.js</h2>
+      <div class="file">frontend/chatbot.js</div>
+      <p>Google Gemini AI chatbot (Semester 1 prototype). Generates suggestion chips, manages multi-turn conversation history, and grounds responses in representative biographical data. To be replaced by GraphRAG in Semester 2.</p>
+      <a href="chatbot.html" style="background:#e67e22;">View Documentation →</a>
+    </div>
+
+  </div>
+
+  <!-- Function Reference -->
+  <div class="functions-section">
+    <h2>Function Reference</h2>
+
+    <!-- map.js functions -->
+    <h3 style="color:#27ae60; margin-bottom:16px;">map.js</h3>
+
+    <div class="func">
+      <h3>ordinal(n)</h3>
+      <div class="source">map.js · line 54</div>
+      <p>Converts a number to its ordinal string representation. Used in the Congress dropdown and chamber history display.</p>
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>n</td><td>number</td><td>The number to convert</td></tr>
+      </table>
+      <div class="returns"><strong>Returns:</strong> string — e.g. "1st", "2nd", "3rd", "119th"</div>
+    </div>
+
+    <div class="func">
+      <h3>renderBadges()</h3>
+      <div class="source">map.js · line 85</div>
+      <p>Renders white pill badges showing representative count at the centroid of each state. Clears and re-renders all badges on each call. Badges are clickable and trigger zoomToState().</p>
+      <div class="returns"><strong>Returns:</strong> void</div>
+    </div>
+
+    <div class="func">
+      <h3>zoomToState(d, abbr)</h3>
+      <div class="source">map.js · line 102</div>
+      <p>Zooms the map into a specific state using D3 transitions over 700ms. Fades other states to 15% opacity, hides rep count badges, and calls renderDots() when the transition completes.</p>
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>d</td><td>Object</td><td>GeoJSON feature object for the state</td></tr>
+        <tr><td>abbr</td><td>string</td><td>Two-letter state abbreviation e.g. "CA"</td></tr>
+      </table>
+      <div class="returns"><strong>Returns:</strong> void</div>
+    </div>
+
+    <div class="func">
+      <h3>zoomOut()</h3>
+      <div class="source">map.js · line 122</div>
+      <p>Resets the map to the full US view with smooth D3 transitions. Removes all dots, tooltips, name list, and hides the rep card.</p>
+      <div class="returns"><strong>Returns:</strong> void</div>
+    </div>
+
+    <div class="func">
+      <h3>renderDots(abbr, scale)</h3>
+      <div class="source">map.js · line 140</div>
+      <p>Renders colored dots for each representative in the zoomed state. House dots use DISTRICTS lookup table for district centroid placement. Senate dots use state centroid with directional offsets based on state shape.</p>
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>abbr</td><td>string</td><td>Two-letter state abbreviation</td></tr>
+        <tr><td>scale</td><td>number</td><td>Current zoom scale factor for dot sizing</td></tr>
+      </table>
+      <div class="returns"><strong>Returns:</strong> void</div>
+    </div>
+
+    <div class="func">
+      <h3 class="async-tag">async</h3>
+      <h3>loadData()</h3>
+      <div class="source">map.js · line 215</div>
+      <p>Fetches representative data from the REST API for the current congress and chamber. Falls back to STATIC_HOUSE or STATIC_SENATE counts if the API call fails. Updates allReps and repCounts then re-renders badges.</p>
+      <div class="returns"><strong>Returns:</strong> Promise&lt;void&gt;</div>
+    </div>
+
+    <!-- repcard.js functions -->
+    <h3 style="color:#8e44ad; margin:32px 0 16px;">repcard.js</h3>
+
+    <div class="func">
+      <h3>formatDate(d)</h3>
+      <div class="source">repcard.js · line 43</div>
+      <p>Formats a date string from YYYY-MM-DD to MM-DD-YYYY. Handles full dates, partial dates (YYYY-MM), and year-only strings.</p>
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>d</td><td>string|null</td><td>Date string in YYYY-MM-DD, YYYY-MM, or YYYY format</td></tr>
+      </table>
+      <div class="returns"><strong>Returns:</strong> string — Formatted date or empty string</div>
+    </div>
+
+    <div class="func">
+      <h3>buildChamberRow(terms, chamberLabel)</h3>
+      <div class="source">repcard.js · line 65</div>
+      <p>Builds a summary row for a chamber from an array of term records. Groups terms to show state, district (House only), congress range, and year range.</p>
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>terms</td><td>Array&lt;Object&gt;</td><td>Array of term objects with congress, state, district, start, departure</td></tr>
+        <tr><td>chamberLabel</td><td>string</td><td>"House" or "Senate"</td></tr>
+      </table>
+      <div class="returns"><strong>Returns:</strong> Array&lt;string&gt;|null — [label, value] or null if no terms</div>
+    </div>
+
+    <div class="func">
+      <h3>openRepCard(rep)</h3>
+      <div class="source">repcard.js · line 92</div>
+      <p>Opens and populates the representative card below the map. Sets photo, name, party badge, chamber history rows, born/died dates, and initializes the AI chatbot chips. Scrolls card into view.</p>
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>rep</td><td>Object</td><td>Representative data object with name, party, state, birth, image, allTerms</td></tr>
+      </table>
+      <div class="returns"><strong>Returns:</strong> void</div>
+    </div>
+
+    <!-- chatbot.js functions -->
+    <h3 style="color:#e67e22; margin:32px 0 16px;">chatbot.js</h3>
+
+    <div class="func">
+      <h3>setupChatbot(rep)</h3>
+      <div class="source">chatbot.js · line 47</div>
+      <p>Sets up the AI chatbot suggestion chips for a representative. Generates four context-aware questions using the representative's last name. Uses addEventListener for reliable click handling.</p>
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>rep</td><td>Object</td><td>Representative data object with name field</td></tr>
+      </table>
+      <div class="returns"><strong>Returns:</strong> void</div>
+    </div>
+
+    <div class="func">
+      <span class="tag async-tag">async</span>
+      <h3>askAI(q)</h3>
+      <div class="source">chatbot.js · line 75</div>
+      <p>Sends a question to the Gemini API and displays the response. Maintains multi-turn conversation history. Grounds the AI in representative biographical data via system prompt. Formats markdown bold and newlines in responses.</p>
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>q</td><td>string|null</td><td>Question text, or null to read from #ai-input field</td></tr>
+      </table>
+      <div class="returns"><strong>Returns:</strong> Promise&lt;void&gt;</div>
+    </div>
+
+  </div>
+
+  <!-- Constants Reference -->
+  <div class="functions-section">
+    <h2>Constants Reference (data.js)</h2>
+
+    <div class="func">
+      <h3>CAPITALS</h3>
+      <p>State capital coordinates [lat, lng] for all 50 states. Used as fallback Senate dot placement.</p>
+      <div class="returns"><strong>Type:</strong> Object.&lt;string, Array&lt;number&gt;&gt; — 50 entries</div>
+    </div>
+
+    <div class="func">
+      <h3>DISTRICTS</h3>
+      <p>Congressional district geographic centroids [lat, lng] for all 435 House districts. Keys in "STATE-DISTRICT" format (e.g., "CA-12").</p>
+      <div class="returns"><strong>Type:</strong> Object.&lt;string, Array&lt;number&gt;&gt; — 435 entries</div>
+    </div>
+
+    <div class="func">
+      <h3>ABBR_TO_NAME / NAME_TO_ABBR</h3>
+      <p>Bidirectional state abbreviation ↔ full name mappings for all 50 states.</p>
+      <div class="returns"><strong>Type:</strong> Object.&lt;string, string&gt; — 50 entries each</div>
+    </div>
+
+    <div class="func">
+      <h3>STATIC_HOUSE / STATIC_SENATE</h3>
+      <p>Static fallback representative counts used when the API is unavailable. STATIC_HOUSE reflects 119th Congress apportionment. STATIC_SENATE is always 2 per state.</p>
+      <div class="returns"><strong>Type:</strong> Object.&lt;string, number&gt;</div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
