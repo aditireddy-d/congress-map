@@ -1,0 +1,106 @@
+[
+  {
+    "bioguideId": "W000817",
+    "name": "Elizabeth Warren",
+    "birth": "1949-06-22",
+    "death": null,
+    "image": "https://bioguide.congress.gov/bioguide/photo/W/W000817.jpg",
+    "Bio": "A Senator from Massachusetts; born in Oklahoma City, Oklahoma...",
+    "terms": [
+      {
+        "congress": 119,
+        "chamber": "Senate",
+        "state": "MA",
+        "district": null,
+        "party": "Democratic",
+        "start": "2013",
+        "departure": null
+      },
+      {
+        "congress": 118,
+        "chamber": "Senate",
+        "state": "MA",
+        "district": null,
+        "party": "Democratic",
+        "start": "2013",
+        "departure": null
+      }
+    ]
+  },
+  {
+    "bioguideId": "S000033",
+    "name": "Bernard Sanders",
+    "birth": "1941-09-08",
+    "death": null,
+    "image": "https://bioguide.congress.gov/bioguide/photo/S/S000033.jpg",
+    "Bio": "A Senator from Vermont; born in Brooklyn, New York...",
+    "terms": [
+      {
+        "congress": 119,
+        "chamber": "Senate",
+        "state": "VT",
+        "district": null,
+        "party": "Independent",
+        "start": "2007",
+        "departure": null
+      }
+    ]
+  },
+  {
+    "bioguideId": "P000197",
+    "name": "Nancy Pelosi",
+    "birth": "1940-03-26",
+    "death": null,
+    "image": "https://bioguide.congress.gov/bioguide/photo/P/P000197.jpg",
+    "Bio": "A Representative from California...",
+    "terms": [
+      {
+        "congress": 119,
+        "chamber": "House",
+        "state": "CA",
+        "district": 11,
+        "party": "Democratic",
+        "start": "1987",
+        "departure": null
+      }
+    ]
+  },
+  {
+    "bioguideId": "E000294",
+    "name": "Ron Estes",
+    "birth": "1956-07-19",
+    "death": null,
+    "image": "https://bioguide.congress.gov/bioguide/photo/E/E000294.jpg",
+    "Bio": "A Representative from Kansas...",
+    "terms": [
+      {
+        "congress": 119,
+        "chamber": "House",
+        "state": "KS",
+        "district": 4,
+        "party": "Republican",
+        "start": "2017",
+        "departure": null
+      }
+    ]
+  },
+  {
+    "bioguideId": "M000355",
+    "name": "Mitch McConnell",
+    "birth": "1942-02-20",
+    "death": null,
+    "image": "https://bioguide.congress.gov/bioguide/photo/M/M000355.jpg",
+    "Bio": "A Senator from Kentucky...",
+    "terms": [
+      {
+        "congress": 119,
+        "chamber": "Senate",
+        "state": "KY",
+        "district": null,
+        "party": "Republican",
+        "start": "1985",
+        "departure": null
+      }
+    ]
+  }
+]
